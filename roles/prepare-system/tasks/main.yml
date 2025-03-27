@@ -1,0 +1,110 @@
+---
+- name: Создание директорий для RAID5
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /etc/mdadm
+    - /etc/raid5
+
+- name: Создание директорий для NFS
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /raid5/nfs
+
+- name: Создание директорий для Apache2 + NGINX
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /var/www/html/au-team.irpo
+    - /var/www/html/au-team.irpo/data
+
+- name: Создание директорий для Docker
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - ~/html1
+    - ~/html2
+
+- name: Создание HTML-файлов для Docker
+  copy:
+    content: "<h1>Hello from container {{ item }}</h1>"
+    dest: "~/html{{ item }}/index.html"
+  with_items:
+    - 1
+    - 2
+
+- name: Создание директорий для Wiki
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /etc/nginx/ssl
+
+- name: Создание директорий для Moodle
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /var/www/html/moodle
+
+- name: Создание файла конфигурации для Moodle
+  copy:
+    content: "<h1>MOODLE</h1>"
+    dest: "/var/www/html/moodle/index.html"
+
+- name: Создание директорий для SAMBA
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /var/lib/samba/sysvol
+
+- name: Удаление существующего файла smb.conf (SAMBA)
+  file:
+    path: /etc/samba/smb.conf
+    state: absent
+
+- name: Создание директорий для Chrony
+  file:
+    path: /etc/chrony
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Создание директорий для Ansible
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - /etc/ansible
+    - /etc/ansible/roles

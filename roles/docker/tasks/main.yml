@@ -1,0 +1,43 @@
+---
+- name: Установка Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Запуск службы Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Создание директорий для контейнеров
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - ~/html1
+    - ~/html2
+
+- name: Создание HTML-страниц для контейнеров
+  copy:
+    content: "<h1>Hello from container {{ item }}</h1>"
+    dest: "~/html{{ item }}/index.html"
+  with_items:
+    - 1
+    - 2
+
+- name: Запуск контейнеров Docker
+  docker_container:
+    name: myapache{{ item }}
+    image: ubuntu/apache2
+    ports:
+      - "808{{ item }}:80"
+    volumes:
+      - "/root/html{{ item }}:/var/www/html"
+    state: started
+  with_items:
+    - 1
+    - 2

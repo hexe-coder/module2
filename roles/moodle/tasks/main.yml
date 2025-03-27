@@ -1,0 +1,38 @@
+---
+- name: Установка Apache2
+  apt:
+    name: apache2
+    state: present
+
+- name: Создание директории для Moodle
+  file:
+    path: /var/www/html/moodle
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Создание HTML-файла для Moodle
+  copy:
+    content: "<h1>MOODLE</h1>"
+    dest: /var/www/html/moodle/index.html
+
+- name: Настройка конфигурационного файла Apache2
+  template:
+    src: moodle.conf.j2
+    dest: /etc/apache2/sites-available/moodle.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Включение сайта Moodle
+  file:
+    src: /etc/apache2/sites-available/moodle.conf
+    dest: /etc/apache2/sites-enabled/moodle.conf
+    state: link
+
+- name: Перезапуск службы Apache2
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes

@@ -1,0 +1,28 @@
+---
+- name: Установка Chrony
+  apt:
+    name: chrony
+    state: present
+
+- name: Настройка файла chrony.conf
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Перезапуск службы Chrony
+  service:
+    name: chronyd
+    state: restarted
+    enabled: yes
+
+- name: Проверка работы Chrony
+  shell: |
+    chronyc sources -v
+    chronyc tracking
+    timedatectl
+    systemctl is-active --quiet chronyd
+  register: chronyd_check
+  failed_when: chronyd_check.rc != 0

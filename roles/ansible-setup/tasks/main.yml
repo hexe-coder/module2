@@ -1,0 +1,43 @@
+---
+- name: Установка Ansible
+  apt:
+    name: ansible
+    state: present
+
+- name: Создание директории для конфигурации Ansible
+  file:
+    path: /etc/ansible
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Создание инвентарного файла
+  copy:
+    content: |
+      [routers]
+      192.168.100.1
+      192.168.0.1
+
+      [servers]
+      192.168.0.2 ansible_connection=ssh ansible_ssh_port=2024 ansible_user=sshuser ansible_ssh_private_key_file=/home/sshuser/.ssh/id_rsa
+      192.168.100.2 ansible_connection=ssh ansible_ssh_port=2024 ansible_user=sshuser ansible_ssh_private_key_file=/home/sshuser/.ssh/id_rsa
+
+      [clients]
+      192.168.200.10
+    dest: /etc/ansible/hosts
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Создание конфигурационного файла Ansible
+  copy:
+    content: |
+      [defaults]
+      inventory = /etc/ansible/hosts
+      interpreter_python = auto_silent
+      host_key_checking = False
+    dest: /etc/ansible/ansible.cfg
+    owner: root
+    group: root
+    mode: '0644'

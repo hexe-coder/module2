@@ -1,0 +1,34 @@
+---
+- name: Установка Samba
+  apt:
+    name: task-samba-dc
+    state: present
+
+- name: Настройка hostname
+  hostname:
+    name: "{{ ansible_hostname }}.au-team.irpo"
+    hostname: "{{ ansible_hostname }}.au-team.irpo"
+    fqdn: "{{ ansible_hostname }}.au-team.irpo"
+
+- name: Очистка существующего конфигурационного файла Samba
+  file:
+    path: /etc/samba/smb.conf
+    state: absent
+
+- name: Создание домена Active Directory
+  shell: |
+    samba-tool domain provision \
+      --realm=AU-TEAM.IRPO \
+      --domain=AU-TEAM \
+      --adminpass=P@ssw0rd \
+      --server-role=dc \
+      --use-rfc2307 \
+      --host-name={{ ansible_hostname }}
+  args:
+    creates: /var/lib/samba/private/secrets.tdb
+
+- name: Запуск службы Samba
+  service:
+    name: samba
+    state: started
+    enabled: yes

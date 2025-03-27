@@ -1,0 +1,24 @@
+---
+- name: Модуль 1 и Модуль 2 - Автоматизация настроек серверов
+  hosts: all
+  become: yes
+  gather_facts: yes
+  vars:
+    ntp_servers:
+      - ntp1.vniiftri.ru
+      - ntp2.vniiftri.ru
+      - ntp3.vniiftri.ru
+      - 0.asia.pool.ntp.org
+      - 1.asia.pool.ntp.org
+      - 2.asia.pool.ntp.org
+      - 3.asia.pool.ntp.org
+
+  roles:
+    - ansible-setup
+    - chronyd
+    - raid5
+    - nfs
+    - ad-samba
+    - docker
+    - wiki
+    - moodle

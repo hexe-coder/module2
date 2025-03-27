@@ -1,0 +1,7 @@
+---
+- name: Подготовка системы перед настройкой
+  hosts: all
+  become: yes
+  gather_facts: yes
+  roles:
+    - prepare-system

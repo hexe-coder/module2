@@ -1,0 +1,47 @@
+---
+- name: Установка Docker Compose
+  apt:
+    name: docker-compose
+    state: present
+
+- name: Создание файла docker-compose.yaml
+  copy:
+    content: |
+      version: '3.4'
+      services:
+        mariadb:
+          container_name: mariadb
+          image: mariadb:10.8
+          ports:
+            - 3306:3306
+          volumes:
+            - mysql-data:/var/lib/mysql
+          environment:
+            MARIADB_USER: wiki
+            MARIADB_PASSWORD: P@ssw0rd
+            MARIADB_ROOT_PASSWORD: P@ssw0rd
+          restart: always
+        mediawiki:
+          image: mediawiki
+          restart: always
+          container_name: wiki
+          ports:
+            - 8080:80
+          depends_on:
+            - mariadb
+          volumes:
+            - mediawiki-images:/var/www/html/images
+      volumes:
+        mysql-data:
+          driver: local
+        mediawiki-images:
+          driver: local
+    dest: ~/docker-compose.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Запуск контейнеров через Docker Compose
+  shell: docker-compose up -d
+  args:
+    chdir: ~/
